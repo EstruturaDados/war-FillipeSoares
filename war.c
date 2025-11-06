@@ -1,9 +1,7 @@
 // ============================================================================
 //         PROJETO WAR ESTRUTURADO - DESAFIO DE CÓDIGO
 // ============================================================================
-//        
-// ============================================================================
-//
+
 // OBJETIVOS:
 // - Modularizar completamente o código em funções especializadas.
 // - Implementar um sistema de missões para um jogador.
@@ -11,48 +9,91 @@
 // - Utilizar passagem por referência (ponteiros) para modificar dados e
 //   passagem por valor/referência constante (const) para apenas ler.
 // - Foco em: Design de software, modularização, const correctness, lógica de jogo.
-//
-// ============================================================================
 
 // Inclusão das bibliotecas padrão necessárias para entrada/saída, alocação de memória, manipulação de strings e tempo.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // --- Constantes Globais ---
 // Definem valores fixos para o número de territórios, missões e tamanho máximo de strings, facilitando a manutenção.
+#define NUM_TERRITORIOS 5
+#define NUM_MISSOES 2
+#define MAX_STRING 20 
 
 // --- Estrutura de Dados ---
 // Define a estrutura para um território, contendo seu nome, a cor do exército que o domina e o número de tropas.
 
-// --- Protótipos das Funções ---
-// Declarações antecipadas de todas as funções que serão usadas no programa, organizadas por categoria.
-// Funções de setup e gerenciamento de memória:
-// Funções de interface com o usuário:
-// Funções de lógica principal do jogo:
-// Função utilitária:
+struct territorio{
+    char nome [50];
+    char cordoexercito [20];
+    int numerodetropas;
+};
 
-// --- Função Principal (main) ---
-// Função principal que orquestra o fluxo do jogo, chamando as outras funções em ordem.
+void limparbufferentrada() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 int main() {
-    // 1. Configuração Inicial (Setup):
-    // - Define o locale para português.
-    // - Inicializa a semente para geração de números aleatórios com base no tempo atual.
-    // - Aloca a memória para o mapa do mundo e verifica se a alocação foi bem-sucedida.
-    // - Preenche os territórios com seus dados iniciais (tropas, donos, etc.).
-    // - Define a cor do jogador e sorteia sua missão secreta.
+    struct territorio mapa [NUM_TERRITORIOS];
+    int totaldeterritorios = 0;
+    int opcao;
 
-    // 2. Laço Principal do Jogo (Game Loop):
-    // - Roda em um loop 'do-while' que continua até o jogador sair (opção 0) ou vencer.
-    // - A cada iteração, exibe o mapa, a missão e o menu de ações.
-    // - Lê a escolha do jogador e usa um 'switch' para chamar a função apropriada:
-    //   - Opção 1: Inicia a fase de ataque.
-    //   - Opção 2: Verifica se a condição de vitória foi alcançada e informa o jogador.
-    //   - Opção 0: Encerra o jogo.
-    // - Pausa a execução para que o jogador possa ler os resultados antes da próxima rodada.
+    do {
+        printf("VAMOS CADASTRAR OS 5 TERRITORIOS INICIAIS DO NOSSO MUNDO!\n\n");
+        printf(" --- Cadastro de Territórios ---\n\n");
+        printf("1 - Cadastre um território:\n");
+        printf("2 - Listar todos os territórios cadastrados\n");
+        printf("0 - Sair\n");
+        printf("-------------------------------------------------\n");
+        printf("Escolha uma opção: ");
+        
+        scanf("%d", &opcao); // Lê a opção escolhida pelo usuário.
+        limparbufferentrada(); // Limpa o '\n' deixado pelo scanf.
 
-    // 3. Limpeza:
-    // - Ao final do jogo, libera a memória alocada para o mapa para evitar vazamentos de memória.
+        switch (opcao) {
+            case 1:
+                if (totaldeterritorios < NUM_TERRITORIOS) {
+                    printf("Digite o nome do território: ");
+                    fgets(mapa[totaldeterritorios].nome, MAX_STRING, stdin);
+                    mapa[totaldeterritorios].nome[strcspn(mapa[totaldeterritorios].nome, "\n")] = 0; // Remove o '\n' do final.
+                    
+                    printf("Digite a cor do exército: ");
+                    fgets(mapa[totaldeterritorios].cordoexercito, MAX_STRING, stdin);
+                    mapa[totaldeterritorios].cordoexercito[strcspn(mapa[totaldeterritorios].cordoexercito, "\n")] = 0; // Remove o '\n' do final.
+                    
+                    printf("Digite o número de tropas: ");
+                    scanf("%d", &mapa[totaldeterritorios].numerodetropas);
+                    limparbufferentrada(); // Limpa o '\n' deixado pelo scanf.
 
+                    totaldeterritorios++;
+                    printf("Território cadastrado com sucesso!\n");
+                } else {
+                    printf("Número máximo de territórios cadastrados.\n");
+                }
+                break;
+            case 2:
+                printf("----- Lista de Territórios Cadastrados -----\n");
+                for (int i = 0; i < totaldeterritorios; i++) {
+                    printf("Território %d:\n", i + 1);
+                    printf("Nome: %s\n", mapa[i].nome);
+                    printf("Cor do Exército: %s\n", mapa[i].cordoexercito);
+                    printf("Número de Tropas: %d\n", mapa[i].numerodetropas);
+                    printf("---------------------------------------------\n");
+                }
+                break;
+            case 0:
+                printf("Encerrando o programa.\n");
+                break;
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
+
+    } while (opcao != 0);
     return 0;
 }
+
 
 // --- Implementação das Funções ---
 
@@ -95,4 +136,4 @@ int main() {
 // Retorna 1 (verdadeiro) se a missão foi cumprida, e 0 (falso) caso contrário.
 
 // limparBufferEntrada():
-// Função utilitária para limpar o buffer de entrada do teclado (stdin), evitando problemas com leituras consecutivas de scanf e getchar.
+// Função utilitária para limpar o buffer de entrada do teclado (stdin), evitando problemas com leituras consecutivas de scanf e getchar
